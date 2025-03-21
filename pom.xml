@@ -74,6 +74,7 @@
 		<module>spring-ai-alibaba-text-summarizer-example</module>
 		<module>spring-ai-alibaba-sql-example</module>
 		<module>spring-ai-alibaba-text-classification-example</module>
+		<module>spring-ai-alibaba-chat-memory-example</module>
 	</modules>
 
 	<dependencyManagement>
@@ -171,6 +172,14 @@
 			<snapshots>
 				<enabled>false</enabled>
 			</snapshots>
+		</repository>
+		<repository>
+			<id>spring-snapshots</id>
+			<name>Spring Snapshots</name>
+			<url>https://repo.spring.io/snapshot</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
 		</repository>
 		<repository>
 			<id>aliyunmaven</id>

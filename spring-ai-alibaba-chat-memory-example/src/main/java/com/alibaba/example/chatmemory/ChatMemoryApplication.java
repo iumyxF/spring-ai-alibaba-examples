@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.alibaba.cloud.ai.application;
+package com.alibaba.example.chatmemory;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -26,11 +26,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 
 @SpringBootApplication
-public class SpringAIIntegrationApplication {
+public class ChatMemoryApplication {
 
 	public static void main(String[] args) {
 
-		SpringApplication.run(SpringAIIntegrationApplication.class, args);
+		SpringApplication.run(ChatMemoryApplication.class, args);
 	}
 
 }
