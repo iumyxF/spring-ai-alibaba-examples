@@ -19,7 +19,7 @@ spring:
   ai:
     dashscope:
       api-key: ${AI_DASHSCOPE_API_KEY}
-    # 自定义增强 mcp server config
+    # 使用自定义增强的 mcp server config 替换
     # mcp:
     #   client:
     #     stdio:
@@ -27,16 +27,22 @@ spring:
 
     # 需要配置相关 tools 的信息
     alibaba:
-      tool-calling:
-        baidu:
-          translate:
-            # 显式开启 Tool Bean 注入
-            enabled: true
-            app-id: ${BAIDU_TRANSLATE_APP_ID}
-            secret-key: ${BAIDU_TRANSLATE_SECRET_KEY}
-          map:
-            enabled: true
-            api-key: ${BAIDU_MAP_API_KEY}
+     playground:
+       tool-calling:
+         baidu:
+           translate:
+             ak: ${BAIDU_TRANSLATE_APP_ID}
+             sk: ${BAIDU_TRANSLATE_SECRET_KEY}
+           map:
+             ak: ${BAIDU_MAP_API_KEY}
+
+    # openai api 接入通义模型
+    openai:
+      base-url: https://dashscope.aliyuncs.com/compatible-mode
+      api-key: ${AI_DASHSCOPE_API_KEY}
+      chat:
+        options:
+          model: qwen-max
 
     # 注意：观测数据可能存在敏感信息！
     chat:
@@ -90,5 +96,5 @@ management:
       show-details: always
   tracing:
     sampling:
-        # trace 采样信息，记录每个请求
-        probability: 1.0
+      # trace 采样信息，记录每个请求
+      probability: 1.0

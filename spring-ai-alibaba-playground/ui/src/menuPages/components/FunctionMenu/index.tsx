@@ -1,20 +1,20 @@
 import {
   DeleteOutlined,
+  EditOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  PlusOutlined,
+  CheckOutlined,
+  CloseOutlined,
 } from "@ant-design/icons";
-import { Button, message, Select, Space, Typography } from "antd";
-import React, { useEffect } from "react";
+import { Button, message, Select, Space, Typography, Input } from "antd";
+import React, { useEffect, useState, useRef } from "react";
 import { useStyle } from "../../../style";
-import { FunctionMenuItem } from "../../../types";
 import { useModelConfigContext } from "../../../stores/modelConfig.store";
 import {
   Conversation,
   useConversationContext,
 } from "../../../stores/conversation.store";
 import { functionMenuItems } from "../../../constant";
-import { Conversations, ConversationsProps } from "@ant-design/x";
 import { useFunctionMenuStore } from "../../../stores/functionMenu.store";
 import { useNavigate } from "react-router-dom";
 
@@ -35,11 +35,17 @@ const FunctionMenu = (props: MenuProps) => {
     deleteConversation,
     updateConversations,
     clearActiveConversation,
+    updateConversationTitle,
   } = useConversationContext();
   const { initModelOptionList, modelOptionList, chooseModel, currentModel } =
     useModelConfigContext();
-  const { updateActiveMenuPage, chooseActiveMenuPage } = useFunctionMenuStore();
+  const { chooseActiveMenuPage } = useFunctionMenuStore();
   const navigate = useNavigate();
+  const [editingConversationId, setEditingConversationId] = useState<
+    string | null
+  >(null);
+  const [editingTitle, setEditingTitle] = useState("");
+  const inputRef = useRef<any>(null);
 
   useEffect(() => {
     initModelOptionList();
@@ -51,32 +57,25 @@ const FunctionMenu = (props: MenuProps) => {
 
   const onConversationClick = (conversationId: string) => {
     try {
+      if (editingConversationId && editingConversationId !== conversationId) {
+        setEditingConversationId(null);
+      }
+
       const conversation = conversations.find(
         (conv) => conv.id === conversationId
       );
 
       if (conversation) {
-        console.log(
-          "点击切换对话:",
-          conversationId,
-          "当前对话:",
-          activeConversation?.id
-        );
-
         // 先清除activeConversation，强制触发重新渲染
         if (activeConversation?.id !== conversationId) {
           clearActiveConversation();
         }
 
-        // 确保清除当前激活菜单页状态，避免干扰
         chooseActiveMenuPage(conversation.type);
 
-        // 激活选中的会话
         chooseActiveConversation(conversationId);
 
-        // 显式导航到会话页面
         const path = `/${conversation.type}/${conversationId}`;
-        console.log("导航到对话:", path);
         navigate(path);
       }
     } catch (error) {
@@ -89,34 +88,45 @@ const FunctionMenu = (props: MenuProps) => {
     navigate("/chat");
   };
 
-  const menuConfig: ConversationsProps["menu"] = (conversation) => ({
-    items: [
-      {
-        label: "Delete",
-        key: "delete",
-        icon: <DeleteOutlined />,
-        danger: true,
-      },
-    ],
-    onClick: (menuInfo) => {
-      console.log("menuInfo", menuInfo);
-      if (menuInfo.key === "delete") {
-        if (conversations.length === 1) {
-          message.info(
-            "Can only be deleted if there are multiple conversations"
-          );
-        } else {
-          deleteConversation(conversation.key);
-          // 如果删除的是当前对话，导航到类页面
-          if (activeConversation?.id === conversation.key) {
-            navigate(`/${activeConversation.type}`);
-          }
-        }
+  // 开始编辑会话标题
+  const startEditingTitle = (
+    conversation: Conversation,
+    e: React.MouseEvent
+  ) => {
+    e.stopPropagation();
+    setEditingConversationId(conversation.id);
+    setEditingTitle(conversation.title);
+    // 等待DOM更新后聚焦输入框
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+        inputRef.current.select();
       }
-    },
-  });
+    }, 50);
+  };
 
-  console.log("conversations", conversations);
+  const saveTitle = (conversationId: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (editingTitle.trim()) {
+      updateConversationTitle(conversationId, editingTitle.trim());
+    }
+    setEditingConversationId(null);
+  };
+
+  const cancelEditing = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setEditingConversationId(null);
+  };
+
+  // 处理输入框按键事件
+  const handleKeyDown = (conversationId: string, e: React.KeyboardEvent) => {
+    e.stopPropagation();
+    if (e.key === "Enter") {
+      saveTitle(conversationId);
+    } else if (e.key === "Escape") {
+      cancelEditing();
+    }
+  };
 
   return (
     <>
@@ -137,7 +147,7 @@ const FunctionMenu = (props: MenuProps) => {
         {/* 🌟 顶部信息 */}
         <div className={styles.userProfile}>
           <Space align="center">
-            <img src="/saa_logo.png" alt="Spring AI Alibaba" />
+            <img src="/logo.svg" alt="Spring AI Alibaba PlayGround" />
           </Space>
           <Button
             type="text"
@@ -182,28 +192,97 @@ const FunctionMenu = (props: MenuProps) => {
         <div className={styles.chooseModel}>
           <Typography.Text>模型选择</Typography.Text>
           <Select
-            onChange={chooseModel}
+            onChange={(value) => chooseModel(value)}
             options={modelOptionList}
             style={{ width: "100%" }}
-            value={currentModel}
+            value={currentModel?.value}
           />
         </div>
         <div className={styles.conversationsContainer}>
           <Typography.Text>对话历史</Typography.Text>
-          <Conversations
-            items={conversations.map((item) => {
-              return {
-                ...item,
-                key: item.id,
-                label: item.title,
-              };
-            })}
-            className={styles.conversations}
-            activeKey={activeConversation?.id}
-            menu={menuConfig}
-            onActiveChange={(value) => onConversationClick(value)}
-            style={{ height: "100%" }}
-          />
+          <div className={styles.conversationsScrollContainer}>
+            {conversations.map((conversation) => (
+              <div
+                key={conversation.id}
+                className={`${styles.conversationItem} ${
+                  activeConversation?.id === conversation.id ? "active" : ""
+                }`}
+                onClick={() => onConversationClick(conversation.id)}
+              >
+                {/* 编辑模式 */}
+                {editingConversationId === conversation.id ? (
+                  <div
+                    className={styles.titleEditContainer}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Input
+                      ref={inputRef}
+                      value={editingTitle}
+                      onChange={(e) => setEditingTitle(e.target.value)}
+                      onKeyDown={(e) => handleKeyDown(conversation.id, e)}
+                      className={styles.titleInput}
+                      size="small"
+                    />
+                    <Button
+                      type="text"
+                      size="small"
+                      icon={<CheckOutlined />}
+                      className={styles.titleEditButton}
+                      onClick={(e) => saveTitle(conversation.id, e)}
+                    />
+                    <Button
+                      type="text"
+                      size="small"
+                      icon={<CloseOutlined />}
+                      className={styles.titleEditButton}
+                      onClick={cancelEditing}
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <span className={styles.conversationTitle}>
+                      {conversation.title}
+                    </span>
+                    <div
+                      className={styles.actionButtonsContainer}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Button
+                        type="text"
+                        className={styles.editButton}
+                        icon={<EditOutlined />}
+                        onClick={(e) => startEditingTitle(conversation, e)}
+                      />
+                      <Button
+                        type="text"
+                        danger
+                        className={styles.deleteButton}
+                        icon={<DeleteOutlined />}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (conversations.length <= 1) {
+                            message.info("至少需要保留一个会话");
+                            return;
+                          }
+
+                          if (activeConversation?.id === conversation.id) {
+                            const type = activeConversation.type;
+                            navigate(`/${type}`);
+                            setTimeout(
+                              () => deleteConversation(conversation.id),
+                              100
+                            );
+                          } else {
+                            deleteConversation(conversation.id);
+                          }
+                        }}
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </>
