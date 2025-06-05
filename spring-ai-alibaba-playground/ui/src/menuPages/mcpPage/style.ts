@@ -33,7 +33,8 @@ export const useStyles = createStyles(({ token, css }) => {
       margin: 8px 0 0;
     `,
     selectionPanel: css`
-      width: 280px;
+      min-width: 232px;
+      max-width: 280px;
       height: 100%;
       background: ${token.colorBgContainer};
       border-radius: ${token.borderRadiusLG}px;
@@ -42,7 +43,7 @@ export const useStyles = createStyles(({ token, css }) => {
       margin-right: 12px;
     `,
     toolsPanel: css`
-      flex: 1;
+      flex: 2;
       height: 100%;
       background: ${token.colorBgContainer};
       border-radius: ${token.borderRadiusLG}px;
@@ -53,7 +54,7 @@ export const useStyles = createStyles(({ token, css }) => {
       margin-right: 12px;
     `,
     connectPanel: css`
-      flex: 1;
+      flex: 3;
       width: 360px;
       height: 100%;
       background: ${token.colorBgContainer};
@@ -91,7 +92,7 @@ export const useStyles = createStyles(({ token, css }) => {
       background: ${token.colorBgTextHover};
     `,
     serverIcon: css`
-      margin-right: 12px;
+      margin-right: 4px;
       font-size: 18px;
       width: 24px;
       height: 24px;
@@ -111,12 +112,12 @@ export const useStyles = createStyles(({ token, css }) => {
       display: flex;
       align-items: center;
     `,
-    serverDescription: css`
-      padding: 12px 16px;
-      font-size: 14px;
-      color: ${token.colorTextSecondary};
-      border-bottom: 1px solid ${token.colorBorderSecondary};
-    `,
+    // serverDescription: css`
+    //   padding: 8px 12px;
+    //   font-size: 14px;
+    //   color: ${token.colorTextSecondary};
+    //   border-bottom: 1px solid ${token.colorBorderSecondary};
+    // `,
     toolsSection: css`
       flex: 1;
       display: flex;
@@ -185,6 +186,36 @@ export const useStyles = createStyles(({ token, css }) => {
       width: 67%;
       height: 100%;
       padding-left: 16px;
+    `,
+    rightPanelTabs: css`
+      height: calc(100% - 50px);
+      .ant-tabs-content {
+        height: 100%;
+      }
+      .ant-tabs-tabpane {
+        padding: 0 16px;
+        height: 100%;
+        overflow-y: auto;
+      }
+      .ant-tabs-nav {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        &::before {
+          display: none;
+        }
+      }
+      .ant-tabs-nav-list {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+      }
+      .ant-tabs-tab {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        margin: 0;
+      }
     `,
     card: css`
       background: ${token.colorBgContainer};
@@ -408,7 +439,6 @@ export const useStyles = createStyles(({ token, css }) => {
       }
     `,
 
-    // New styles for tabs and client section
     connectTabs: css`
       width: 100%;
       .ant-tabs-nav {
@@ -418,7 +448,6 @@ export const useStyles = createStyles(({ token, css }) => {
     `,
     configContainer: css`
       padding: 16px;
-      margin-bottom: 16px;
     `,
     configCode: css`
       position: relative;
@@ -500,41 +529,72 @@ export const useStyles = createStyles(({ token, css }) => {
     `,
     submitButton: css`
       margin-top: 8px;
+      width: 100%;
     `,
 
-    // Execution result styles
     executionResult: css`
       margin-top: 16px;
       border: 1px solid ${token.colorBorder};
       border-radius: 8px;
       overflow: hidden;
     `,
+    resultContainer: css`
+      height: 100%;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    `,
+    jsonResultContainer: css`
+      flex: 1;
+      background: ${token.colorBgContainer};
+      border-radius: ${token.borderRadiusLG}px;
+      box-shadow: ${token.boxShadowSecondary};
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    `,
     resultHeader: css`
-      padding: 8px 16px;
-      background-color: ${token.colorBgContainer};
-      border-bottom: 1px solid ${token.colorBorder};
-      font-weight: 500;
+      padding: 12px 16px;
+      border-bottom: 1px solid ${token.colorBorderSecondary};
+      display: flex;
+      align-items: center;
+      gap: 8px;
     `,
     successHeader: css`
       color: ${token.colorSuccess};
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
     `,
     errorHeader: css`
       color: ${token.colorError};
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
     `,
     resultContent: css`
-      padding: 16px;
-      background-color: ${token.colorBgElevated};
-      max-height: 300px;
-      overflow-y: auto;
+      flex: 1;
+      overflow: auto;
+      position: relative;
 
-      pre {
-        margin: 0;
-        white-space: pre-wrap;
-        word-wrap: break-word;
+      .syntax-highlighter {
+        margin: 0 !important;
+        padding: 16px !important;
+        background: ${token.colorBgContainer} !important;
+        font-family: ${token.fontFamilyCode} !important;
+        font-size: 13px !important;
+        line-height: 1.5 !important;
+        height: 100% !important;
       }
     `,
     errorMessage: css`
+      padding: 16px;
       color: ${token.colorError};
+      font-size: 14px;
+      line-height: 1.5;
     `,
 
     // Loading overlay styles
@@ -555,6 +615,26 @@ export const useStyles = createStyles(({ token, css }) => {
       color: white;
       margin-top: 16px;
       font-size: 16px;
+    `,
+    introContainer: css`
+      /* padding: 0 16px; */
+      h2 {
+        color: ${token.colorTextHeading};
+        margin-bottom: 16px;
+      }
+      h3 {
+        color: ${token.colorTextHeading};
+        margin: 16px 0 8px;
+      }
+      p,
+      li {
+        color: ${token.colorText};
+        line-height: 1.6;
+      }
+      ul,
+      ol {
+        padding-left: 20px;
+      }
     `,
   };
 });

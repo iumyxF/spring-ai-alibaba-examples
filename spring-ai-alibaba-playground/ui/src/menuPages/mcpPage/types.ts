@@ -1,71 +1,49 @@
-export interface McpConversationViewProps {
-  conversationId: string;
+import { createStyles } from "antd-style";
+
+// MCP API response interfaces
+export interface McpApiResponse {
+  code: number;
+  message: string;
+  data: McpServer[];
 }
 
-export interface Message {
-  id: string;
-  text: string;
-  sender: "user" | "bot";
-  timestamp: Date;
-}
-
-export interface McpMessage {
-  role: "user" | "assistant";
-  content: string;
-  timestamp: number;
-  isLoading?: boolean;
-  isError?: boolean;
-}
-
-export interface Message {
-  id: string;
-  text: string;
-  sender: "user" | "bot";
-  timestamp: Date;
-}
-
-export interface InputResultProps {
-  messages: Message[];
-  title?: string;
-}
-
-export interface McpServerResponse {
+export interface McpServer {
   id: string;
   name: string;
-  desc: string;
-  toolList: McpToolResponse[];
+  desc: string | null;
+  env: Record<string, string>;
+  toolList: McpTool[];
 }
 
-export interface McpToolResponse {
+export interface McpTool {
   name: string;
-  params: Record<string, string>;
+  params: string; // JSON schema string
   desc: string;
+}
+
+// Formatted interfaces for UI
+export interface McpServerFormatted {
+  id: string;
+  name: string;
+  icon: string;
+  description: string;
+  tools: McpToolFormatted[];
+  env?: Record<string, string>;
 }
 
 export interface McpToolFormatted {
   id: string;
   name: string;
   description: string;
-  params: Record<string, string>;
+  params: Record<string, any>; // Parsed params
+  schema?: any; // Parsed JSON schema
 }
 
-export interface McpServerFormatted {
-  id: string;
-  name: string;
-  icon: React.ReactNode;
-  description: string;
-  tools: McpToolFormatted[];
-}
-
-export interface McpServer {
-  id: string;
-  name: string;
-  icon: string;
-  description?: string;
-}
-
-export interface McpTool {
-  id: string;
-  name: string;
+export interface FormField {
+  key: string;
+  label: string;
+  fieldType: string;
+  placeholder: string;
+  required: boolean;
   description?: string;
 }
