@@ -14,11 +14,14 @@
 	<properties>
 		<spring-boot.version>3.4.0</spring-boot.version>
 		<spring-ai.version>1.0.0</spring-ai.version>
-		<spring-ai-alibaba.version>1.0.0.2</spring-ai-alibaba.version>
+
+        <!--Tips: playground 中使用 spring ai alibaba 开发版本。需要本地编译主干仓库！！！ -->
+		<spring-ai-alibaba.version>1.0.0.3-SNAPSHOT</spring-ai-alibaba.version>
 
         <!-- Node and npm -->
         <node.version>v20.12.2</node.version>
         <npm.version>10.9.2</npm.version>
+
         <!-- For playground frontend resource. dist has been placed in the resource directory,
         if you have the problem of secondary development or local front-end project failure to start,
         please set this development to true, and run the "mvn clean package" to repackage the front-end project.
@@ -150,13 +153,6 @@
             <version>${spring-ai-alibaba.version}</version>
         </dependency>
 
-        <!-- Swagger API Docs -->
-        <dependency>
-            <groupId>com.github.xingfudeshi</groupId>
-            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
-            <version>${knife4j.version}</version>
-        </dependency>
-
         <!--DB -->
         <dependency>
             <groupId>org.xerial</groupId>
@@ -168,12 +164,6 @@
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-community-dialects</artifactId>
             <version>${hibernate.version}</version>
-        </dependency>
-
-        <!-- Observable -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
         <dependency>
